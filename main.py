@@ -5,7 +5,6 @@
 ################
 
 # Wishlist
-# Charging progress indicators? Maybe use the onboard LED to indicate charging level through flashes?
 
 
 from machine import ADC, Pin, PWM, Timer
@@ -72,9 +71,9 @@ rows = [11,10,13]
 cols = [14,15]
 KEY_UP   = const(0)
 KEY_DOWN = const(1)
-keys = [['1', '2'],['3','4'],['5', '6']] # each tuple represents a row
+keys = [['2', '1'],['3','4'],['5', '6']] # each tuple represents a row
 
-row_pins = [Pin(pin_name, mode=Pin.IN) for pin_name in rows]
+row_pins = [Pin(pin_name, mode=Pin.IN, pull=Pin.PULL_DOWN) for pin_name in rows]
 col_pins = [Pin(pin_name, mode=Pin.OUT, pull=Pin.PULL_UP) for pin_name in cols]
 # row_pins = [Pin(pin_name, mode=Pin.OUT) for pin_name in rows]
 # col_pins = [Pin(pin_name, mode=Pin.IN, pull=Pin.PULL_DOWN) for pin_name in cols]
@@ -105,12 +104,12 @@ def buttonRead(timer):
     key = None
     for row in range(3):
         for col in range(2):
-            row_pins[row].high()
-            if col_pins[col].value() == KEY_DOWN:
+            col_pins[col].high()
+            if row_pins[row].value() == KEY_DOWN:
                 key = KEY_DOWN
-            if col_pins[col].value() == KEY_UP:
+            if row_pins[row].value() == KEY_UP:
                 key = KEY_UP
-            row_pins[row].low()
+            col_pins[col].low()
             if key == KEY_DOWN:
                 print("Key pressed = "+ keys[row][col])
                 last_key_press = keys[row][col]
@@ -137,17 +136,21 @@ def buttonRead(timer):
                     if runServo == True:
                         runServo = False
                         servo.duty_ns(MID)
+                        print("Servo off")
                     else:
                         runServo = True
+                        print("Servo on")
                 elif last_key_press == "5":
                    sleep(0.2)
                 elif last_key_press == "6":
                    sleep(0.2)
 
+
 def batteryCheck():
 # Read the LiPo battery voltage and display it as percentages in eyepiece circle
    global runCircle
    eyeLock.acquire()
+   led1.duty_u16(0)
    batteryVoltage = vsys.read_u16() * batteryCF
    batteryPercentage = 100 * ((batteryVoltage - batteryEmpty) / (batteryFull - batteryEmpty))
    print("Battery voltage:  " + str(batteryVoltage))
@@ -159,6 +162,12 @@ def batteryCheck():
        c4.duty_u16(0)
        cC.duty_u16(0)
        print("Battery check: 0-25%")
+       sleep(1)
+       for bf in range(1):
+           led1.duty_u16(brightDuty)
+           sleep(0.5)
+           led1.duty_u16(0)
+           sleep(0.5)
    elif 25.0001 <= batteryPercentage <= 50:
        c1.duty_u16(brightDuty)
        c2.duty_u16(brightDuty)
@@ -166,6 +175,12 @@ def batteryCheck():
        c4.duty_u16(0)
        cC.duty_u16(0)
        print("Battery check: 25-50%")
+       sleep(1)
+       for bf in range(2):
+           led1.duty_u16(brightDuty)
+           sleep(0.5)
+           led1.duty_u16(0)
+           sleep(0.5)
    elif 50.0001 <= batteryPercentage <= 75:
        c1.duty_u16(brightDuty)
        c2.duty_u16(brightDuty)
@@ -173,6 +188,12 @@ def batteryCheck():
        c4.duty_u16(0)
        cC.duty_u16(0)
        print("Battery check: 50-75%")
+       sleep(1)
+       for bf in range(3):
+           led1.duty_u16(brightDuty)
+           sleep(0.5)
+           led1.duty_u16(0)
+           sleep(0.5)
    elif 75.0001 <= batteryPercentage <= 105:
        c1.duty_u16(brightDuty)
        c2.duty_u16(brightDuty)
@@ -180,6 +201,12 @@ def batteryCheck():
        c4.duty_u16(brightDuty)
        cC.duty_u16(0)
        print("Battery check: 75-100%")
+       sleep(1)
+       for bf in range(4):
+           led1.duty_u16(brightDuty)
+           sleep(0.5)
+           led1.duty_u16(0)
+           sleep(0.5)
    else: # something's wrong, show centre lights but nothing on ring
        c1.duty_u16(0)
        c2.duty_u16(0)
@@ -187,6 +214,11 @@ def batteryCheck():
        c4.duty_u16(0)
        cC.duty_u16(brightDuty)
        print("Battery check error")
+       sleep(1)
+       for bf in range(10):
+           led1.duty_u16(brightDuty)
+           sleep(0.2)
+           led1.duty_u16(0)
    sleep(3)
    eyeLock.release()
    runCircle = True
