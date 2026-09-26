@@ -2,6 +2,8 @@
 
 MicroPython firmware for a light-up Star Trek Borg costume, running on a Raspberry Pi Pico.
 
+**Note**: Claude's involvement in this repo was purely to check the files over for anything I shouldn't be uploading, writing the readme, and pushing it up to Github. The core code was written by me (following a couple of tutorials!) back in 2022.
+
 ![The finished costume](images/borg.jpg)
 
 The Pico drives an animated LED eyepiece, a servo that "scans" the room at random, and an ultrasonic sensor that locks the scanner forward and lights a red centre LED when someone gets close. A small six-button keypad hidden in the costume controls brightness, eyepiece modes, the scanner and a battery check.
@@ -21,10 +23,10 @@ The Pico drives an animated LED eyepiece, a servo that "scans" the room at rando
 
 - Raspberry Pi Pico running MicroPython
 - LiPo battery, with its voltage read from VSYS
-- 5 LEDs for the eyepiece: a ring of 4 plus 1 centre LED
+- Eyepiece LED ring - the one I used was scavenged from a Sky HD box, but something similar will work, or build your own using a ring of 4 LED plus 1 centre LED
 - Hobby servo
 - HC-SR04 ultrasonic distance sensor
-- 3×2 button matrix breakout
+- 3×2 button matrix breakout - also scavenged from a Sky HD box
 
 ### Pin map
 
