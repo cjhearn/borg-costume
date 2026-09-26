@@ -1,0 +1,10 @@
+# Full-size originals and images not for publishing
+_originals/
+
+# Python / editor clutter
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
